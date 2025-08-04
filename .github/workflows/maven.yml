@@ -31,11 +31,10 @@ jobs:
         echo "Showing test reports content:"
         cd "bstackdemo-pom 4/target/surefire-reports"
         ls -l
-        # Afișează primele 1000 de linii din toate rapoartele .txt
         head -n 1000 *.txt || echo "No test reports found"
 
     - name: Upload test reports artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: surefire-reports
         path: bstackdemo-pom 4/target/surefire-reports

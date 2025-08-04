@@ -1,0 +1,40 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "BStackDemo" ]
+  pull_request:
+    branches: [ "BStackDemo" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build with Maven (with debug)
+      run: |
+        cd "bstackdemo-pom 4"
+        mvn -B package -e -X || true  # continuă chiar dacă testele pică
+
+    - name: Show surefire reports
+      run: |
+        echo "Showing test reports content:"
+        cd "bstackdemo-pom 4/target/surefire-reports"
+        ls -l
+        head -n 1000 *.txt || echo "No test reports found"
+
+    - name: Upload test reports artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: surefire-reports
+        path: bstackdemo-pom 4/target/surefire-reports

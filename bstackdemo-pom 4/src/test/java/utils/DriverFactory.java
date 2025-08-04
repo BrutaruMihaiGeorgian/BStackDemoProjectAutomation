@@ -1,30 +1,40 @@
 package utils;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
-import java.util.UUID;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 
 public class DriverFactory {
 
     public static WebDriver createDriver(String browser) {
-        if (browser.equalsIgnoreCase("chrome")) {
-            ChromeOptions options = new ChromeOptions();
-
-            // Generăm un profil temporar unic pentru a evita erorile din CI
-            String uniqueProfile = "/tmp/chrome-profile-" + UUID.randomUUID();
-            options.addArguments("--user-data-dir=" + uniqueProfile);
-
-            // Opțiuni recomandate pentru rulare în medii CI/CD (ex. GitHub Actions)
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--incognito");
-
-            return new ChromeDriver(options);
+        if (browser == null || browser.isEmpty()) {
+            browser = "chrome"; // default
         }
 
-        throw new IllegalArgumentException("Browser not supported: " + browser);
+        switch (browser.toLowerCase()) {
+            case "firefox":
+                WebDriverManager.firefoxdriver().setup();
+                return new FirefoxDriver();
+
+            case "edge":
+                WebDriverManager.edgedriver().setup();
+                return new EdgeDriver();
+
+            case "safari":
+                // SafariDriver nu are nevoie de WebDriverManager
+                // Asigură-te că "Allow Remote Automation" e activat în Safari -> Develop menu
+                return new SafariDriver();
+
+            case "chrome":
+            default:
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--incognito");
+                return new ChromeDriver(options);
+        }
     }
 }

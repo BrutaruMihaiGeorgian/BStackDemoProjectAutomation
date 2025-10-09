@@ -25,8 +25,6 @@ public class DriverFactory {
                 return new EdgeDriver();
 
             case "safari":
-                // SafariDriver nu are nevoie de WebDriverManager
-                // Asigură-te că "Allow Remote Automation" e activat în Safari -> Develop menu
                 return new SafariDriver();
 
             case "chrome":
